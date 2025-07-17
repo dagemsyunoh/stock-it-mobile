@@ -70,7 +70,7 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
     private final String sSeparator = "-".repeat(32), dSeparator = "=".repeat(32);
     private final ArrayList<String> headerList = new ArrayList<>();
     private ArrayList<ReceiptModel> receiptList;
-    private String header, body, footer, customer, invoice, dateTime, deviceAddress;
+    private String header, body, footer, cashierName, customer, invoice, dateTime, deviceAddress;
     private TextView printerName, printHeader, printBody, printFooter;
     private AlertDialog dialog;
     private OutputStream os;
@@ -79,7 +79,7 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
     private BluetoothAdapter btAdapter;
     private BluetoothSocket btSocket;
     private BluetoothDevice btDevice;
-    private boolean isConnected = false, permanentlyDenied, changePrinter;
+    private boolean isConnected = false, permanentlyDenied, changePrinter, reprint;
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(@NonNull Message msg) {
             dialog.dismiss();
@@ -112,7 +112,6 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         checkBTPermissions();
 
-
         printerName = findViewById(R.id.printer_name);
         printHeader = findViewById(R.id.print_header);
         printBody = findViewById(R.id.print_body);
@@ -121,9 +120,12 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
         printButton = findViewById(R.id.print_button);
         receiptList = new ArrayList<>();
 
+        reprint = getIntent().getExtras().getBoolean("reprint");
         invoice = getIntent().getExtras().getString("invoice");
         cash = getIntent().getExtras().getDouble("cash");
         customer = getIntent().getExtras().getString("customer");
+        if (reprint) cashierName = getIntent().getExtras().getString("cashier name");
+        else cashierName = preferences.getString("cashier name").toUpperCase();
 
         if (getIntent().getExtras().containsKey("items")) {
             String items = getIntent().getExtras().getString("items");
@@ -191,7 +193,7 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
                 });
                 t.start();
             }
-            if (getIntent().getExtras().getBoolean("reprint")) {
+            if (reprint) {
                 setResult(RESULT_OK);
                 finish();
             } else saveReceipt();
@@ -466,6 +468,7 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
         receiptMap.put("total", total);
         receiptMap.put("amount rendered cash", cash);
         receiptMap.put("items", items);
+        receiptMap.put("cashier", cashierName);
         if (customer != null && !customer.isEmpty()) {
             receiptMap.put("customer", customer);
             addCustomerReceipt();
@@ -585,7 +588,6 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
         StringBuilder text = new StringBuilder();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         if (dateTime == null) dateTime = formatter.format(new Date());
-        String cashierName = preferences.getString("cashier name").toUpperCase();
         text.append("DATE & TIME: ").append(dateTime).append("\n");
         text.append(invoice).append("\n");
         text.append("CASHIER: ").append(cashierName).append("\n");
