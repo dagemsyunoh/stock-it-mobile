@@ -126,7 +126,7 @@ public class StockViewHolder extends StockBaseViewHolder {
                 case MotionEvent.ACTION_MOVE:
                     view.getParent().requestDisallowInterceptTouchEvent(true);
                     getListener().onRetainSwipe(item, position);
-                    onAnimate(view, onSwipeMove(event.getRawX() + dXLead, event.getRawX() + dXTrail,swipeState), 250L);
+                    onAnimate(view, onSwipeMove(event.getRawX() + dXLead, event.getRawX() + dXTrail, swipeState), 250L);
                     item.setState(getSwipeState(event.getRawX() + dXLead, event.getRawX() + dXTrail, swipeState));
                     return false;
                 case MotionEvent.ACTION_UP:
