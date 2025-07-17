@@ -191,7 +191,10 @@ public class PrintPreviewActivity extends AppCompatActivity implements Runnable 
                 });
                 t.start();
             }
-            saveReceipt();
+            if (getIntent().getExtras().getBoolean("reprint")) {
+                setResult(RESULT_OK);
+                finish();
+            } else saveReceipt();
         });
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

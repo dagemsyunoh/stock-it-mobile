@@ -374,6 +374,7 @@ public class HomeFragment extends Fragment {
         i.putExtra("cash", Double.valueOf(amountRendered.replace("PHP ", "")));
         i.putExtra("items", items);
         i.putExtra("customer", customer);
+        i.putExtra("reprint", true);
         printLauncher.launch(i);
     }
 
