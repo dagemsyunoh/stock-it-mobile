@@ -134,39 +134,46 @@
             android:layout_margin="10dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/name_text"
+            <LinearLayout
+                android:id="@+id/name_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_alignParentTop="true"
-                android:layout_margin="5dp"
-                android:gravity="center"
-                android:text="@string/display_name"
-                android:textSize="20sp" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/name_edit"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="-4dp"
-                android:visibility="gone">
+                <TextView
+                    android:id="@+id/name_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:text="@string/display_name"
+                    android:textSize="20sp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/name_input"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/name_edit"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:text="@string/customer_name"
-                    android:textAllCaps="true"
-                    android:textSize="15sp" />
+                    android:layout_height="55dp"
+                    android:layout_marginTop="-4dp"
+                    android:visibility="gone">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="@string/customer_name"
+                        android:textAllCaps="true"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/transactions_text"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:layout_below="@+id/name_text"
+                android:layout_below="@+id/name_layout"
                 android:layout_margin="5dp"
                 android:gravity="center"
                 android:text="@string/previous_transactions"
