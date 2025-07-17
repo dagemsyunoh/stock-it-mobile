@@ -251,6 +251,7 @@ public class HomeFragment extends Fragment {
                     "Total Price",
                     "Change",
                     "Customer",
+                    "Casher Name",
                     Gravity.CENTER,
                     Typeface.BOLD);
             if (documents.size() > 1) {
@@ -274,6 +275,9 @@ public class HomeFragment extends Fragment {
                 String customer = "";
                 if (document.getString("customer") != null)
                     customer = document.getString("customer");
+                String cashierName = "";
+                if (document.getString("cashier name") != null)
+                    cashierName = document.getString("cashier name");
 
                 if (dateList.contains(date)) {
                     double dailyTotal = salesList.get(dateList.indexOf(date)) + document.getDouble("total");
@@ -292,13 +296,14 @@ public class HomeFragment extends Fragment {
                         "PHP " + df.format(document.getDouble("total")),
                         "PHP " + df.format(document.getDouble("amount rendered cash") - document.getDouble("total")),
                         customer,
+                        cashierName,
                         Gravity.START, Typeface.NORMAL);
             }
             setChart();
         });
     }
 
-    private void getReceiptTableRow(String invoiceNo, String dateTime, String items, String amountRendered, String total, String change, String customer, int gravity, int typeface) {
+    private void getReceiptTableRow(String invoiceNo, String dateTime, String items, String amountRendered, String total, String change, String customer, String cashierName, int gravity, int typeface) {
         TableRow tableRow = new TableRow(getActivity());
         tableRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
 
@@ -309,13 +314,14 @@ public class HomeFragment extends Fragment {
         addTextViewToRow(tableRow, total, Gravity.CENTER, typeface);
         addTextViewToRow(tableRow, change, Gravity.CENTER, typeface);
         addTextViewToRow(tableRow, customer, Gravity.CENTER, typeface);
+        addTextViewToRow(tableRow, cashierName, Gravity.CENTER, typeface);
 
         if (typeface == Typeface.NORMAL)
-            tableRow.setOnClickListener(v -> showReceiptDialog(invoiceNo, dateTime, items, amountRendered, total, change, customer));
+            tableRow.setOnClickListener(v -> showReceiptDialog(invoiceNo, dateTime, items, amountRendered, total, change, customer, cashierName));
         receiptTable.addView(tableRow, new  TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
     }
 
-    private void showReceiptDialog(String invoiceNo, String dateTime, String items, String amountRendered, String total, String change, String customer) {
+    private void showReceiptDialog(String invoiceNo, String dateTime, String items, String amountRendered, String total, String change, String customer, String cashierName) {
         Dialog dialog = new Dialog(getActivity());
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.receipt_log_box);
@@ -364,16 +370,17 @@ public class HomeFragment extends Fragment {
         itemsVal.setText(newItemsText);
 
         back.setOnClickListener(v1 -> dialog.dismiss());
-        reprint.setOnClickListener(v1 -> printPreview(invoiceNo, dateTime, amountRendered, items, customer));
+        reprint.setOnClickListener(v1 -> printPreview(invoiceNo, dateTime, amountRendered, items, customer, cashierName));
     }
 
-    private void printPreview(String invoiceNo, String dateTime, String amountRendered, String items, String customer) {
+    private void printPreview(String invoiceNo, String dateTime, String amountRendered, String items, String customer, String cashierName) {
         Intent i = new Intent(getActivity(), PrintPreviewActivity.class);
         i.putExtra("invoice", invoiceNo);
         i.putExtra("date-time", dateTime);
         i.putExtra("cash", Double.valueOf(amountRendered.replace("PHP ", "")));
         i.putExtra("items", items);
         i.putExtra("customer", customer);
+        i.putExtra("cashier name", cashierName);
         i.putExtra("reprint", true);
         printLauncher.launch(i);
     }
