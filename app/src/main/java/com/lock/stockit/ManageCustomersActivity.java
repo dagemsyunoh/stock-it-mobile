@@ -151,7 +151,7 @@ public class ManageCustomersActivity extends AppCompatActivity implements Custom
     }
 
     private void setRecyclerView() {
-        adapter = new CustomerAdapter(this, SwipeState.LEFT);
+        adapter = new CustomerAdapter(this, SwipeState.LEFT_RIGHT);
         recyclerView.setLayoutManager(new CustomLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
     }
@@ -262,6 +262,10 @@ public class ManageCustomersActivity extends AppCompatActivity implements Custom
             logger.setCustomerLog("delete", name, user.getEmail());
             dialog.dismiss();
         });
+    }
+
+    @Override
+    public void onClickLeft(CustomerModel item, int position) {
     }
 
     @Override

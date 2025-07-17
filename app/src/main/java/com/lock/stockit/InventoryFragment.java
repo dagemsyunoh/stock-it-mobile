@@ -61,7 +61,7 @@ public class InventoryFragment extends Fragment implements StockListeners {
     private static final long SEARCH_DELAY = 300; // milliseconds debounce time
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
-    public static final double LOW_STOCK_THRESHOLD = 10.0;  // for example, less or equal to 5 triggers alert
+    public static final double LOW_STOCK_THRESHOLD = 10.0;
     private static final long NOTIFY_COOLDOWN = 30 * 60 * 1000; // 30 minutes in milliseconds
     private static final String PREFS_NAME = "low_stock_notifications";
     private static final String PREFS_KEY_PREFIX = "last_notified_";
@@ -101,19 +101,29 @@ public class InventoryFragment extends Fragment implements StockListeners {
 
     private void filterStocks(String newText) {
         ArrayList<StockModel> filteredList = new ArrayList<>();
-        for (StockModel item : stockList)
-            if (item.getItemName().toLowerCase().contains(newText.toLowerCase()) ||
-                    item.getItemSize().toLowerCase().contains(newText.toLowerCase()))
-                filteredList.add(item);
+
+        String[] searchTerms = newText.toLowerCase().trim().split("\\s+");
+
+        for (StockModel item : stockList) {
+            String itemName = item.getItemName().toLowerCase();
+            String itemSize = item.getItemSize().toLowerCase();
+            String combined = itemName + " " + itemSize;
+
+            boolean allMatch = true;
+            for (String term : searchTerms)
+                if (!itemName.contains(term) && !itemSize.contains(term)) {
+                    allMatch = false;
+                    break;
+                }
+
+            if (allMatch) filteredList.add(item);
+        }
 
         displayList = filteredList;
 
-        if (filteredList.isEmpty()) noResult.setVisibility(View.VISIBLE);
-        else noResult.setVisibility(View.GONE);
-
+        noResult.setVisibility(filteredList.isEmpty() ? View.VISIBLE : View.GONE);
         adapter.setStocks(displayList);
     }
-
 
     @Override
     public void onStart() {
@@ -126,6 +136,8 @@ public class InventoryFragment extends Fragment implements StockListeners {
         stockRef.addSnapshotListener((querySnapshot, error) -> {
             if (error != null || querySnapshot == null) return;
             stockList.clear();
+            names.clear();
+            sizes.clear();
             for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
                 String name = documentSnapshot.getString("item name");
                 String size = documentSnapshot.getString("item size");
@@ -133,15 +145,22 @@ public class InventoryFragment extends Fragment implements StockListeners {
                 String qtyType = documentSnapshot.getString("qty type");
                 double regPrice = documentSnapshot.getDouble("reg price");
                 double dscPrice = documentSnapshot.getDouble("dsc price");
+
                 names.add(name);
                 sizes.add(size);
                 stockList.add(new StockModel(name, size, qty, qtyType, regPrice, dscPrice));
             }
-            setRecyclerView();
             stockList.sort(new StockComparator());
-            displayList = stockList;
-            adapter.setStocks(displayList);
-            adapter.notifyDataSetChanged();
+            setRecyclerView();
+
+            String query = searchView.getQuery().toString().trim();
+            if (!query.isEmpty()) filterStocks(query); // Re-apply filter
+            else {
+                displayList = new ArrayList<>(stockList);
+                adapter.setStocks(displayList);
+                adapter.notifyDataSetChanged();
+                noResult.setVisibility(displayList.isEmpty() ? View.VISIBLE : View.GONE);
+            }
             checkLowStockItems();
         });
     }
@@ -197,7 +216,10 @@ public class InventoryFragment extends Fragment implements StockListeners {
         intent.putExtra("open_tab", "inventory");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(),
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         builder.setContentIntent(pendingIntent);
         notificationManager.notify(notificationId, builder.build());
@@ -317,8 +339,19 @@ public class InventoryFragment extends Fragment implements StockListeners {
     }
 
     private void setItemSize(TextInputEditText itemSize) {
+        String regex = "\\d+";
         String input = String.valueOf(itemSize.getText());
-        String output = input.replaceAll("\\s+", "").toLowerCase();
+        String output = "";
+        String[] words = input.split("\\s");
+        if (input.contains(regex)) output = input.replaceAll("\\s+", "").toLowerCase();
+        else if (!input.isEmpty()) {
+            StringBuilder text = new StringBuilder();
+            for (String word : words)
+                text.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            output = text.toString();
+        }
         itemSize.setText(output);
     }
 
