@@ -107,4 +107,8 @@
     <string name="device_name">Device Name</string>
     <string name="_00_11_22_33_44_55">00:11:22:33:44:55</string>
     <string name="warning">Warning</string>
+    <string name="today">TODAY</string>
+    <string name="_3_days">3 DAYS</string>
+    <string name="this_week">THIS WEEK</string>
+    <string name="this_month">THIS MONTH</string>
 </resources>

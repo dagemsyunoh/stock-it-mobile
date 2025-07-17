@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment {
     private final List<Double> salesList = new ArrayList<>();
     private TableLayout receiptTable, userTable;
     private LineChart lineChart;
-    private double max;
+    private double max, days = 3;
     private LinearLayout userLogLayout, receiptLogLayout;
     private ListenerRegistration receiptListenerRegistration;
     private ListenerRegistration userLogListenerRegistration;
@@ -80,6 +80,22 @@ public class HomeFragment extends Fragment {
         userLogLayout = view.findViewById(R.id.user_log_layout);
         receiptLogLayout = view.findViewById(R.id.receipt_log_layout);
         userTable = view.findViewById(R.id.user_log);
+        Button threeDays = view.findViewById(R.id.three_days);
+        Button thisWeek = view.findViewById(R.id.this_week);
+        Button thisMonth = view.findViewById(R.id.this_month);
+
+        threeDays.setOnClickListener(v -> {
+            days = 3;
+            setChart();
+        });
+        thisWeek.setOnClickListener(v -> {
+            days = 7;
+            setChart();
+        });
+        thisMonth.setOnClickListener(v -> {
+            days = 30;
+            setChart();
+        });
 
         return view;
     }
@@ -133,8 +149,6 @@ public class HomeFragment extends Fragment {
 
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(dateList));
-        xAxis.setLabelCount(dateList.size());
         xAxis.setGranularity(1f);
         xAxis.setLabelRotationAngle(-90);
 
@@ -145,8 +159,17 @@ public class HomeFragment extends Fragment {
         yAxis.setLabelCount(5);
 
         List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < salesList.size(); i++)
-            entries.add(new Entry(i, salesList.get(i).floatValue()));
+        List<String> xLabels = new ArrayList<>();
+
+        // Only keep the last `days` number of data points
+        int startIndex = Math.max(0, dateList.size() - (int) days);
+        for (int i = startIndex; i < dateList.size(); i++) {
+            entries.add(new Entry(i - startIndex, salesList.get(i).floatValue()));
+            xLabels.add(dateList.get(i));
+        }
+
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels));
+        xAxis.setLabelCount(xLabels.size());
 
         LineDataSet lineDataSet = new LineDataSet(entries, "Total Sales");
         lineDataSet.setColor(Color.GREEN);
@@ -154,7 +177,7 @@ public class HomeFragment extends Fragment {
         LineData lineData = new LineData(lineDataSet);
         lineChart.setData(lineData);
         lineChart.setVisibleXRangeMinimum(3);
-        lineChart.setVisibleXRangeMaximum(30);
+        lineChart.setVisibleXRangeMaximum((float) days);
         lineChart.invalidate();
     }
 
