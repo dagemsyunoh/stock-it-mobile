@@ -14,14 +14,7 @@ import com.lock.stockit.Models.CustomerModel;
 
 abstract public class CustomerBaseViewHolder extends RecyclerView.ViewHolder {
 
-
-    /**
-     * Main
-     */
     private final CustomerListeners customerListeners;
-    /**
-     * On Swipe
-     */
     private final WindowManager windowManager;
     private final Float cardViewLeading;
     private final Float cardViewLeadEdge;
@@ -30,7 +23,6 @@ abstract public class CustomerBaseViewHolder extends RecyclerView.ViewHolder {
     private final int width;
     protected Float dXLead = (float) 0;
     protected Float dXTrail = (float) 0;
-
     public CustomerBaseViewHolder(View itemView, CustomerListeners customerListeners) {
         super(itemView);
         this.customerListeners = customerListeners;
@@ -65,13 +57,10 @@ abstract public class CustomerBaseViewHolder extends RecyclerView.ViewHolder {
         view.animate().x(dx).setDuration(duration).start();
     }
 
-    /**
-     * @noinspection unused
-     */
     protected Float onSwipeMove(Float currentLead, Float currentTrail, SwipeState swipeState) {
         if (swipeState == SwipeState.LEFT || swipeState == SwipeState.RIGHT || swipeState == SwipeState.LEFT_RIGHT)
             return currentLead;
-        else return cardViewLeading;
+        return cardViewLeading;
     }
 
     protected SwipeState getSwipeState(Float currentLead, Float currentTrail, SwipeState swipeState) {

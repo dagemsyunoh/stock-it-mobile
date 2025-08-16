@@ -405,6 +405,7 @@ ActivityResultLauncher<Intent> printLauncher = registerForActivityResult(new Act
         Intent i = new Intent(getActivity(), PrintPreviewActivity.class);
         i.putExtra("receiptList", receiptList);
         i.putExtra("invoice", invoice);
+        i.putExtra("reprint", false);
 
         Dialog inputDialog = new Dialog(getActivity());
         inputDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

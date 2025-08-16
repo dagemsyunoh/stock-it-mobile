@@ -108,8 +108,8 @@ public class StockViewHolder extends StockBaseViewHolder {
 
         minusOne.setOnClickListener(view -> {
             QtyEditor.qtyEditor(inputQty, -1);
-            if (Integer.parseInt(inputQty.getText().toString()) == 1)
-                Toast.makeText(cardView.getContext(), "Quantity cannot be less than 1. Please delete the item instead.", Toast.LENGTH_SHORT).show();
+            if (Integer.parseInt(inputQty.getText().toString()) == 0)
+                Toast.makeText(cardView.getContext(), "Quantity cannot be negative.", Toast.LENGTH_SHORT).show();
         });
 
         cardView.setOnClickListener(view -> { }); // Do not remove, it is required for the swipe to work
@@ -126,7 +126,7 @@ public class StockViewHolder extends StockBaseViewHolder {
                 case MotionEvent.ACTION_MOVE:
                     view.getParent().requestDisallowInterceptTouchEvent(true);
                     getListener().onRetainSwipe(item, position);
-                    onAnimate(view, onSwipeMove(event.getRawX() + dXLead, event.getRawX() + dXTrail,swipeState), 250L);
+                    onAnimate(view, onSwipeMove(event.getRawX() + dXLead, event.getRawX() + dXTrail, swipeState), 250L);
                     item.setState(getSwipeState(event.getRawX() + dXLead, event.getRawX() + dXTrail, swipeState));
                     return false;
                 case MotionEvent.ACTION_UP:
