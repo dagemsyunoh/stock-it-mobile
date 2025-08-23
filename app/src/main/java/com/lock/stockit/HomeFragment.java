@@ -299,8 +299,8 @@ public class HomeFragment extends Fragment {
                 if (document.getString("customer") != null)
                     customer = document.getString("customer");
                 String cashierName = "";
-                if (document.getString("cashier name") != null)
-                    cashierName = document.getString("cashier name");
+                if (document.getString("cashie") != null)
+                    cashierName = document.getString("cashier");
 
                 if (dateList.contains(date)) {
                     double dailyTotal = salesList.get(dateList.indexOf(date)) + document.getDouble("total");
