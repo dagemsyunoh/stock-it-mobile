@@ -299,7 +299,7 @@ public class HomeFragment extends Fragment {
                 if (document.getString("customer") != null)
                     customer = document.getString("customer");
                 String cashierName = "";
-                if (document.getString("cashie") != null)
+                if (document.getString("cashier") != null)
                     cashierName = document.getString("cashier");
 
                 if (dateList.contains(date)) {

@@ -6,10 +6,12 @@ plugins {
 android {
     namespace 'com.lock.stockit'
     compileSdk 36
+    buildToolsVersion '35.0.1'
 
     defaultConfig {
         applicationId "com.lock.stockit"
         minSdk 30
+        //noinspection OldTargetApi
         targetSdk 35
         versionCode 1
         versionName "1.0"
