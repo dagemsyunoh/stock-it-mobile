@@ -12,9 +12,11 @@ public class SizeComparator implements Comparator<String> {
             String[] d1 = o1.split("x");
             String[] d2 = o2.split("x");
             for (int i = 0; i < d1.length; i++) {
-                int a = Integer.parseInt(d1[i]);
-                int b = Integer.parseInt(d2[i]);
-                int compareSize = Integer.compare(a, b);
+                if (d1[i].contains("/"))
+                    d1[i] = String.valueOf(Double.parseDouble(d1[i].split("/")[0]) / Double.parseDouble(d1[i].split("/")[1]));
+                double a = Double.parseDouble(d1[i]);
+                double b = Double.parseDouble(d2[i]);
+                int compareSize = Double.compare(a, b);
                 if (compareSize != 0) return compareSize;
             }
         } else return o1.compareTo(o2);

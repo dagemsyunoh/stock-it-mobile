@@ -42,8 +42,10 @@ import com.lock.stockit.Helpers.SwipeState;
 import com.lock.stockit.Models.StockModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InventoryFragment extends Fragment implements StockListeners {
 
@@ -339,19 +341,15 @@ public class InventoryFragment extends Fragment implements StockListeners {
     }
 
     private void setItemSize(TextInputEditText itemSize) {
-        String regex = "\\d+";
-        String input = String.valueOf(itemSize.getText());
-        String output = "";
-        String[] words = input.split("\\s");
-        if (input.contains(regex)) output = input.replaceAll("\\s+", "").toLowerCase();
-        else if (!input.isEmpty()) {
-            StringBuilder text = new StringBuilder();
-            for (String word : words)
-                text.append(Character.toUpperCase(word.charAt(0)))
-                        .append(word.substring(1).toLowerCase())
-                        .append(" ");
-            output = text.toString();
-        }
+        String input = itemSize.getText().toString().trim();
+        String output;
+
+        if (input.matches("(\\d+\\s*x\\s*)+\\d+"))
+            output = input.replaceAll("\\s+", "").toLowerCase();
+        else if (!input.isEmpty()) output = Arrays.stream(input.split("\\s+"))
+                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase())
+                .collect(Collectors.joining(" "));
+        else output = "";
         itemSize.setText(output);
     }
 
